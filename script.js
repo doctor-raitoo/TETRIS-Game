@@ -56,6 +56,44 @@ function draw() {
 
     fill(colorBackground);
     rect(460, 60, 130, 35, 5, 5);
+
+    strokeWeight(3);
+    noFill();
+    stroke(colorLight);
+    rect(465, 65, 120, 25, 5, 5);
+
+    stroke(colorLight);
+    rect(465, 410, 120, 120, 5, 5);
+
+    rect(465, 215, 120, 50, 5, 5);
+
+    rect(465, 285, 120, 50, 5, 5);
+
+    fill(25);
+    noStroke();
+    textSize(24);
+    textAlign(CENTER);
+    text("Score", 525, 85);
+    text("Level", 525, 238);
+    text("Lines", 525, 308);
+
+    textSize(24);
+    textAlign(RIGHT);
+    text(currentScore, 560, 135);
+    text(currentLevel, 560, 260);
+    text(linesCleared, 560, 330);
+
+    stroke(colorDark);
+    line(gameEdgeRight, 0, gameEdgeRight, height);
+
+    fallingPiece.show();
+
+    if (keyIsDown(DOWN_ARROW)){
+        updateEvery = 2;
+    } else {
+        updateEvery = updateEveryCurrent;
+    }
+
 }
 
 
