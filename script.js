@@ -94,6 +94,122 @@ function draw() {
         updateEvery = updateEveryCurrent;
     }
 
+    if (pauseGame){
+        ticks++;
+        if (ticks >= updateEvery){
+            ticks = 0;
+            fallingPiece.fall(fallSpeed);
+        }
+    }
+
+    for (let i = 0; i < gridPieces.length; i++){
+        gridPieces[i].show();
+    }
+
+    for (let i = 0; i < lineFades.length; i++){
+        lineFades[i].show();
+    }
+
+    if (gridWorkers.length > 0){
+        gridWorkers[0].work();
+    }
+
+    textAlign(CENTER);
+    fill(255);
+    noStroke();
+    textSize(14);
+    text("Controls:\n↑\n← ↓ →\n", 75, 155);
+    text("Left and Right:\nmove side to side", 75, 230);
+    text("Up:\nrotate", 75, 280);
+    text("Down:\nfall faster", 75, 330);
+    text("R:\nreset game", 75, 380);
+
+    if (gameOver){
+        fill(colorDark);
+        textSize(54);
+        textAlign(CENTER);
+        text("Game Over!", 300, 270);
+    }
+
+    strokeWeight(3);
+    stroke('#304550');
+    noFill();
+    rect(0, 0, width, height); 
+}
+
+function keyPressed(){
+    if (keyCode === 82){
+        resetGame();
+    }
+    if (!pauseGame){
+        if (keyCode === LEFT_ARROW){
+            fallingPiece.input(LEFT_ARROW);
+        } else if (keyCode === RIGHT_ARROW){
+            fallingPiece.input(RIGHT_ARROW);
+        }
+        if (keyCode === UP_ARROW){
+            fallingPiece.input(UP_ARROW);
+        }
+    }
+}
+
+class PlayPiece {
+    constructor(){
+        this.pos = createVector(0, 0);
+        this.rotation = 0;
+        this.nextPieceType = Math.floor(Math.random() * 7);
+        this.nextPieces = [];
+        this.pieceType = 0;
+        this.pieces = [];
+        this.orientation = [];
+        this.fallen = false;
+    }
+
+    nextPieces(){
+        this.nextPieceType = pseudoRandom(this.pieceType);
+        this.nextPieces = [];
+
+        const points = orientPoints(this.nextPieceType, 0);
+        let xx = 525, yy = 490;
+
+        if (this.nextPieceType !== 0 && this.nextPieceType !== 3 && this.nextPieceType !== 5){
+            xx += (gridSpace * 0.5);
+        }
+
+        if (this.nextPieceType == 5){
+            xx -= (gridSpace * 0.5);
+        }
+
+        for (let i = 0; i < 4; i++){
+            this.nextPieces.push(new Square(xx + points[i][0] * gridSpace, yy + points[i][1] * gridSpace, this.nextPieceType));
+        }
+    }
+
+    fall (amount){
+        if (!this.futureCollision(0, amount, this.rotation)){
+            this.addPos(0, amount);
+            this.fallen = true;
+        } else {
+            if (!this.fallen){
+                pauseGame = true;
+                gameOver = true;
+            } else {
+                this.commitShape();
+            }
+        }
+    }
+
+    resetPiece() {
+        this.rotation = 0;
+        this.fallen = false;
+        this.pos.x = 330;
+        this.pos.y = -60;
+
+        this.pieceType = this.nextPieceType;
+        
+        this.nextPiece();
+        this.newPoints();
+    }
 }
 
 
