@@ -210,6 +210,59 @@ class PlayPiece {
         this.nextPiece();
         this.newPoints();
     }
+
+    newPoints() {
+        const points = orientPoints(this.pieceType, this.rotation);
+        this.orientation = points;
+        this.pieces = [];
+
+        for (let i = 0; i < points.length; i++){
+            this.pieces.push(new Square(this.pos.x + points[i][0] * gridSpace, this.pos.y + points[i][0] * gridSpace, this.pieceType));
+        }
+    }
+
+    updatePoints(){
+        if (this.pieces){
+            const points = orientPoints(this.pieceType, this.rotation);
+            this.orientation = points;
+            for (let i = 0; i < 4; i++){
+                this.pieces[i].pos.x = this.pos.x + points[i][0] * gridSpace;
+                this.pieces[i].pos.y = this.pos.y + points[i][1] * gridSpace;
+            }
+        }
+    }
+
+    addPos(x, y){
+        this.pos.x += x;
+        this.pos.x += y;
+
+        if (this.pieces){
+            for (let i = 0; i < 4; i++){
+                this.piece[i].pos.x += x;
+                this.piece[i].pos.y += y;
+            }
+        }
+    }
+
+    futureCollision(x, y, rotation){
+        let xx, yy, points = 0;
+        if (rotation !== this.rotation){
+            points = orientPoints(this.pieceType, rotation);
+        }
+
+        for (let i = 0; i < this.pieces.length; i++){
+            if (points){
+                xx = this.pos.x + points[i][0] * gridSpace;
+                yy = this.pos.y + points[i][1] * gridSpace;
+            } else {
+                xx = this.points[i].pos.x + x;
+                yy = this.points[i].pos.y + y;
+            }
+            if (xx < gameEdgeLeft || xx + gridSpace > gameEdgeRight || yy + gridSpace > height){
+                return true;
+            }
+        }
+    }
 }
 
 
