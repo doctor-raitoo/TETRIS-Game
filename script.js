@@ -261,6 +261,41 @@ class PlayPiece {
             if (xx < gameEdgeLeft || xx + gridSpace > gameEdgeRight || yy + gridSpace > height){
                 return true;
             }
+            for (let j = 0; j < gridPieces.length; j++){
+                if (xx == gridPieces[j].pos.x){
+                    if (yy >= gridPieces[j].pos.y && yy < gridPieces[j].pos.y + gridSpace){
+                        return true;
+                    }
+                    if (yy + gridSpace > gridPieces[j].pos.y && yy + gridSpace <= gridPieces[j].pos.y + gridSpace){
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    input (key){
+        switch (key){
+            case LEFT_ARROW:
+                if (!this.futureCollision (-gridSpace, 0, this.rotation)){
+                    this.addpos(-gridSpace, 0);
+                }
+                break;
+            case RIGHT_ARROW:
+                if (!this.futureCollision (-gridSpace, 0, this.rotation)){
+                    this.addpos(-gridSpace, 0);
+                }
+                break;
+            case UP_ARROW:
+                let newRotation = this.rotation + 1;
+                if (newRotation > 3){
+                    newRotation = 0;
+                }
+                if (!this.futureCollision(0, 0, newRotation)){
+                    this.rotation = newRotation;
+                    this.updatePoints();
+                }
+                break;
         }
     }
 }
